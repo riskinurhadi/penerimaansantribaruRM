@@ -11,6 +11,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- SweetAlert2 CSS (Baru ditambahkan) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <style>
         :root {
@@ -122,6 +124,12 @@
             box-shadow: 0 0 0 0.25rem rgba(13, 161, 91, 0.25);
         }
 
+        /* Styling saat input error / kosong */
+        .is-invalid {
+            border-color: #dc3545 !important;
+            background-color: #fff8f8;
+        }
+
         .btn-next {
             background-color: var(--primary-green);
             color: white;
@@ -180,15 +188,15 @@
                     </div>
                 </div>
 
-                <!-- Form Start -->
-                <form id="formStep1" action="step2.php" method="POST">
+                <!-- Form Start (novalidate ditambahkan untuk menonaktifkan tooltip bawaan browser) -->
+                <form id="formStep1" action="step2.php" method="POST" novalidate>
                     
                     <!-- BAGIAN 1: Pilihan Pendaftaran -->
                     <h5 class="section-title"><i class="fas fa-school me-2"></i>Informasi Pendaftaran</h5>
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label class="form-label">Status Masuk <span class="text-danger">*</span></label>
-                            <select class="form-select" name="status_masuk" required>
+                            <select class="form-select req-field" name="status_masuk" required>
                                 <option value="">-- Pilih Status --</option>
                                 <option value="Santri Baru">Santri Baru</option>
                                 <option value="Pindahan">Pindahan</option>
@@ -197,7 +205,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Sekolah Formal Yang Dipilih <span class="text-danger">*</span></label>
-                            <select class="form-select" name="pilihan_sekolah" required>
+                            <select class="form-select req-field" name="pilihan_sekolah" required>
                                 <option value="">-- Pilih Jenjang Sekolah --</option>
                                 <option value="RA">RA</option>
                                 <option value="MI">MI</option>
@@ -221,27 +229,27 @@
                     <div class="row g-3">
                         <div class="col-md-12">
                             <label class="form-label">Nama Lengkap (Sesuai Ijazah/KK) <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="nama_lengkap" placeholder="Masukkan nama lengkap" required>
+                            <input type="text" class="form-control req-field" name="nama_lengkap" placeholder="Masukkan nama lengkap" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">NISN <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="nisn" placeholder="Nomor Induk Siswa Nasional" required>
+                            <input type="number" class="form-control req-field" name="nisn" placeholder="Nomor Induk Siswa Nasional" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">NIK Siswa (Sesuai KK) <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="nik" placeholder="Nomor Induk Kependudukan" required>
+                            <input type="number" class="form-control req-field" name="nik" placeholder="Nomor Induk Kependudukan" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Tempat Lahir <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="tempat_lahir" placeholder="Kota/Kabupaten kelahiran" required>
+                            <input type="text" class="form-control req-field" name="tempat_lahir" placeholder="Kota/Kabupaten kelahiran" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Tanggal Lahir <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" name="tanggal_lahir" required>
+                            <input type="date" class="form-control req-field" name="tanggal_lahir" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Jenis Kelamin <span class="text-danger">*</span></label>
-                            <select class="form-select" name="jenis_kelamin" required>
+                            <select class="form-select req-field" name="jenis_kelamin" required>
                                 <option value="">-- Pilih Jenis Kelamin --</option>
                                 <option value="Laki-laki">Laki-laki</option>
                                 <option value="Perempuan">Perempuan</option>
@@ -249,7 +257,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Agama <span class="text-danger">*</span></label>
-                            <select class="form-select" name="agama" required>
+                            <select class="form-select req-field" name="agama" required>
                                 <option value="Islam" selected>Islam</option>
                             </select>
                         </div>
@@ -259,11 +267,11 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Anak Ke- <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control" name="anak_ke" min="1" placeholder="Contoh: 1" required>
+                            <input type="number" class="form-control req-field" name="anak_ke" min="1" placeholder="Contoh: 1" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Jumlah Saudara Kandung <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control" name="jumlah_saudara" min="0" placeholder="Contoh: 2" required>
+                            <input type="number" class="form-control req-field" name="jumlah_saudara" min="0" placeholder="Contoh: 2" required>
                         </div>
                         <div class="col-md-12">
                             <label class="form-label">Nomor KIP (Kartu Indonesia Pintar)</label>
@@ -274,7 +282,7 @@
 
                     <!-- Tombol Navigasi -->
                     <div class="d-flex justify-content-end mt-5 pt-3 border-top">
-                        <button type="submit" class="btn btn-next">
+                        <button type="submit" class="btn btn-next" id="btnSubmit">
                             Langkah Selanjutnya <i class="fas fa-arrow-right ms-2"></i>
                         </button>
                     </div>
@@ -285,13 +293,16 @@
     </div>
 </div>
 
+<!-- SweetAlert2 JS (Baru ditambahkan) -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
-    // FUNGSI AUTO-SAVE (Mencegah Data Hilang saat Refresh)
     document.addEventListener("DOMContentLoaded", function() {
         const formId = "formStep1";
+        const form = document.getElementById(formId);
         const formElements = document.querySelectorAll(`#${formId} input, #${formId} select`);
         
-        // 1. Load Data dari LocalStorage saat halaman dibuka
+        // 1. Load Data dari LocalStorage saat halaman dibuka (AUTO-SAVE)
         const savedData = JSON.parse(localStorage.getItem(formId) || "{}");
         formElements.forEach(el => {
             if (savedData[el.name]) {
@@ -301,19 +312,22 @@
                     el.value = savedData[el.name];
                 }
             }
+            
+            // Hapus class invalid jika user mulai mengetik ulang
+            el.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+            });
         });
 
-        // 2. Simpan Data ke LocalStorage setiap kali pengguna mengetik/memilih
-        document.getElementById(formId).addEventListener("input", function() {
+        // 2. Simpan Data ke LocalStorage setiap kali pengguna mengetik (AUTO-SAVE)
+        form.addEventListener("input", function() {
             const formData = new FormData(this);
             const dataObj = {};
             
-            // Loop untuk input standar
             for (let [key, value] of formData.entries()) {
                 dataObj[key] = value;
             }
             
-            // Khusus Checkbox (karena jika tidak dicentang, FormData tidak menangkapnya)
             formElements.forEach(el => {
                 if (el.type === 'checkbox') {
                     dataObj[el.name] = el.checked ? el.value : '';
@@ -321,6 +335,48 @@
             });
 
             localStorage.setItem(formId, JSON.stringify(dataObj));
+        });
+
+        // 3. VALIDASI FORM & SECURITY TOKEN SEBELUM PINDAH STEP
+        form.addEventListener("submit", function(event) {
+            // Cek apakah form valid (apakah semua yang 'required' sudah diisi)
+            if (!this.checkValidity()) {
+                event.preventDefault(); // Hentikan perpindahan halaman
+                event.stopPropagation();
+                
+                // Cari semua input yang kosong dan wajib diisi
+                let firstInvalidElement = null;
+                const requiredFields = this.querySelectorAll('.req-field');
+                
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.classList.add('is-invalid'); // Tambahkan kotak merah
+                        if (!firstInvalidElement) firstInvalidElement = field;
+                    } else {
+                        field.classList.remove('is-invalid');
+                    }
+                });
+
+                // Tampilkan Popup Alert
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Formulir Belum Lengkap',
+                    text: 'Mohon isi semua kolom yang bertanda bintang merah (*).',
+                    confirmButtonColor: '#0da15b'
+                }).then(() => {
+                    // Fokuskan layar ke input pertama yang kosong
+                    if (firstInvalidElement) {
+                        firstInvalidElement.focus();
+                    }
+                });
+                
+            } else {
+                // Jika validasi sukses: 
+                // Buat token keamanan untuk membuka pintu step 2
+                localStorage.setItem('step1_completed', 'true');
+                
+                // Form akan otomatis ter-submit dan berpindah ke step2.php
+            }
         });
     });
 </script>
