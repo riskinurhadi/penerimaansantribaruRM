@@ -256,8 +256,6 @@ try {
     <title>Memproses Pendaftaran...</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
@@ -276,32 +274,23 @@ try {
             localStorage.removeItem('formStep3');
             localStorage.removeItem('formStep4');
 
-            // Tampilkan Notifikasi Sukses dengan Tombol Download
+            // Tampilkan Notifikasi Sukses
             Swal.fire({
                 icon: 'success',
                 title: 'Pendaftaran Berhasil!',
-                html: 'Selamat! Data calon santri <b><?= htmlspecialchars($nama_lengkap, ENT_QUOTES, 'UTF-8') ?></b> telah kami terima.<br><br>Nomor Pendaftaran Anda:<br><span style="display:inline-block; background:#eafbf3; color:#0da15b; font-size:1.8rem; font-weight:bold; padding:10px 20px; border-radius:10px; border:2px dashed #0da15b; margin-top:10px; margin-bottom:15px; letter-spacing:2px;"><?= $no_pendaftaran ?></span><br><span style="font-size:0.9rem;">Silakan <b>Unduh Bukti Pendaftaran</b> di bawah ini. Bukti ini merupakan <b class="text-danger">Kartu Kendali</b> yang wajib dicetak dan dibawa saat mendatangi pos panitia (TU, Kesehatan, Keuangan, Keamanan).</span>',
-                showCancelButton: true,
+                html: 'Selamat! Data calon santri <b><?= htmlspecialchars($nama_lengkap, ENT_QUOTES, 'UTF-8') ?></b> telah kami terima.<br><br>Nomor Pendaftaran Anda: <h3 style="color:#0da15b; font-weight:bold; margin-top:10px;"><?= $no_pendaftaran ?></h3>Silakan simpan nomor ini untuk melakukan pengecekan status kelulusan.',
                 confirmButtonColor: '#0da15b',
-                cancelButtonColor: '#64748b',
-                confirmButtonText: '<i class="fas fa-file-pdf me-2"></i> Unduh Bukti PDF',
-                cancelButtonText: '<i class="fas fa-home me-1"></i> Beranda',
-                allowOutsideClick: false,
-                reverseButtons: true
+                confirmButtonText: 'Kembali ke Beranda',
+                allowOutsideClick: false
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Buka PDF di tab baru
-                    window.open('cetak_bukti.php?id=<?= $pendaftaran_id ?>', '_blank');
-                    // Arahkan kembali ke Landing Page
-                    window.location.href = 'index.html'; 
-                } else {
-                    window.location.href = 'index.html';
+                    window.location.href = 'admin/index.php'; // Arahkan kembali ke Landing Page
                 }
             });
 
         <?php else : ?>
             
-            // Tampilkan Notifikasi Gagal
+            // Tampilkan Notifikasi Gagal (Pesan yang sudah diterjemahkan)
             Swal.fire({
                 icon: 'error',
                 title: 'Mohon Maaf, Proses Gagal!',
