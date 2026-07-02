@@ -199,10 +199,11 @@
                             <label class="form-label">Sekolah Formal Yang Dipilih <span class="text-danger">*</span></label>
                             <select class="form-select" name="pilihan_sekolah" required>
                                 <option value="">-- Pilih Jenjang Sekolah --</option>
-                                <option value="MI">MI</option>
-                                <option value="MTs">MTs</option>
-                                <option value="MA">MA</option>
-                                <option value="SMK">SMK</option>
+                                <option value="RA">RA (Raudhatul Athfal)</option>
+                                <option value="MI">MI Raudlatul Mutaallimin</option>
+                                <option value="MTs">MTs Raudlatul Mutaallimin</option>
+                                <option value="MA">MA Raudlatul Mutaallimin</option>
+                                <option value="SMK">SMK Raudlatul Mutaallimin</option>
                             </select>
                         </div>
                         <div class="col-12 mt-3">

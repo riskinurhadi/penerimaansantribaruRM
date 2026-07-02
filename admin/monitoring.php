@@ -46,9 +46,9 @@ $initial_max_id = ($max_id_query && $max_id_query->num_rows > 0) ? $max_id_query
 $initial_max_id = $initial_max_id ?? 0;
 
 $q_pendaftar = $conn->query("SELECT COUNT(*) as t FROM pendaftaran")->fetch_assoc()['t'] ?? 0;
-$q_lulus = $conn->query("SELECT COUNT(*) as t FROM pendaftaran WHERE status_pendaftaran='Lulus'")->fetch_assoc()['t'] ?? 0;
+$q_lulus = $conn->query("SELECT COUNT(*) as t FROM pendaftaran WHERE status_pendaftaran='Lengkap'")->fetch_assoc()['t'] ?? 0;
 $q_verif = $conn->query("SELECT COUNT(*) as t FROM pendaftaran WHERE status_pendaftaran='Menunggu Verifikasi'")->fetch_assoc()['t'] ?? 0;
-$q_batal = $conn->query("SELECT COUNT(*) as t FROM pendaftaran WHERE status_pendaftaran='Batal' OR status_pendaftaran='Tidak Lulus'")->fetch_assoc()['t'] ?? 0;
+$q_batal = $conn->query("SELECT COUNT(*) as t FROM pendaftaran WHERE status_pendaftaran='Batal' OR status_pendaftaran='Belum Lengkap'")->fetch_assoc()['t'] ?? 0;
 
 $q_lengkap = $conn->query("SELECT COUNT(*) as t FROM data_berkas WHERE pas_foto != '' AND kartu_keluarga != '' AND ktp_ortu != ''")->fetch_assoc()['t'] ?? 0;
 
@@ -72,6 +72,7 @@ $q_ukur = $conn->query("SELECT COUNT(*) as t FROM data_seragam WHERE status_peng
 $q_putra = $conn->query("SELECT COUNT(*) as t FROM pendaftaran p JOIN data_diri d ON p.id = d.pendaftaran_id WHERE d.jenis_kelamin = 'Laki-laki'")->fetch_assoc()['t'] ?? 0;
 $q_putri = $conn->query("SELECT COUNT(*) as t FROM pendaftaran p JOIN data_diri d ON p.id = d.pendaftaran_id WHERE d.jenis_kelamin = 'Perempuan'")->fetch_assoc()['t'] ?? 0;
 
+$q_ra = $conn->query("SELECT COUNT(*) as t FROM pendaftaran WHERE pilihan_sekolah = 'RA'")->fetch_assoc()['t'] ?? 0;
 $q_mi = $conn->query("SELECT COUNT(*) as t FROM pendaftaran WHERE pilihan_sekolah = 'MI'")->fetch_assoc()['t'] ?? 0;
 $q_mts = $conn->query("SELECT COUNT(*) as t FROM pendaftaran WHERE pilihan_sekolah = 'MTs'")->fetch_assoc()['t'] ?? 0;
 $q_ma = $conn->query("SELECT COUNT(*) as t FROM pendaftaran WHERE pilihan_sekolah = 'MA'")->fetch_assoc()['t'] ?? 0;
@@ -348,7 +349,7 @@ $pendaftar_terbaru = $conn->query("
         <div class="d-flex justify-content-between mt-auto pt-2 border-top border-secondary">
             <div class="text-center">
                 <div class="fw-bold" style="color: var(--success); font-size: 1.3rem; line-height: 1.1;"><?= $q_lulus ?></div>
-                <div style="font-size:0.7rem; color:var(--text-muted);">Diterima</div>
+                <div style="font-size:0.7rem; color:var(--text-muted);">Berkas Lengkap</div>
             </div>
             <div class="text-center">
                 <div class="fw-bold" style="color: var(--warning); font-size: 1.3rem; line-height: 1.1;"><?= $q_verif ?></div>
@@ -590,9 +591,9 @@ $pendaftar_terbaru = $conn->query("
     new Chart(ctxSchool, {
         type: 'bar',
         data: {
-            labels: ['MI', 'MTs', 'MA', 'SMK'],
+            labels: ['RA', 'MI', 'MTs', 'MA', 'SMK'],
             datasets: [{
-                data: [<?= $q_mi ?>, <?= $q_mts ?>, <?= $q_ma ?>, <?= $q_smk ?>],
+                data: [<?= $q_ra ?>, <?= $q_mi ?>, <?= $q_mts ?>, <?= $q_ma ?>, <?= $q_smk ?>],
                 backgroundColor: gradSchool,
                 borderRadius: 6,
                 barThickness: 20
@@ -635,7 +636,7 @@ $pendaftar_terbaru = $conn->query("
     let lastId = <?= $initial_max_id ?>;
 
     function showToast(data) {
-        let isSuccess = (data.status_pendaftaran !== 'Batal' && data.status_pendaftaran !== 'Tidak Lulus');
+        let isSuccess = (data.status_pendaftaran !== 'Batal' && data.status_pendaftaran !== 'Belum Lengkap');
         let toastClass = isSuccess ? 'toast-success' : 'toast-danger';
         let iconClass = isSuccess ? 'fas fa-check' : 'fas fa-times';
         let titleText = isSuccess ? 'Pendaftaran Baru Masuk!' : 'Pendaftaran Gagal/Batal';

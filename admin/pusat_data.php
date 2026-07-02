@@ -41,7 +41,7 @@ $tanggal_ini = date('d') . ' ' . $bulan_indo[$bulan_inggris] . ' ' . date('Y');
 // 1. QUERY DATA PENDAFTARAN & BERKAS
 // ==========================================
 $q_pendaftar = $conn->query("SELECT COUNT(*) as t FROM pendaftaran")->fetch_assoc()['t'] ?? 0;
-$q_lulus = $conn->query("SELECT COUNT(*) as t FROM pendaftaran WHERE status_pendaftaran='Lulus'")->fetch_assoc()['t'] ?? 0;
+$q_lulus = $conn->query("SELECT COUNT(*) as t FROM pendaftaran WHERE status_pendaftaran='Lengkap'")->fetch_assoc()['t'] ?? 0;
 $q_verif = $conn->query("SELECT COUNT(*) as t FROM pendaftaran WHERE status_pendaftaran='Menunggu Verifikasi'")->fetch_assoc()['t'] ?? 0;
 
 // Logika simulasi kelengkapan berkas (Minimal 3 wajib)
@@ -76,6 +76,7 @@ $pct_ukur = ($q_pendaftar > 0) ? round(($q_ukur / $q_pendaftar) * 100) : 0;
 $q_putra = $conn->query("SELECT COUNT(*) as t FROM pendaftaran p JOIN data_diri d ON p.id = d.pendaftaran_id WHERE d.jenis_kelamin = 'Laki-laki'")->fetch_assoc()['t'] ?? 0;
 $q_putri = $conn->query("SELECT COUNT(*) as t FROM pendaftaran p JOIN data_diri d ON p.id = d.pendaftaran_id WHERE d.jenis_kelamin = 'Perempuan'")->fetch_assoc()['t'] ?? 0;
 
+$q_ra = $conn->query("SELECT COUNT(*) as t FROM pendaftaran WHERE pilihan_sekolah = 'RA'")->fetch_assoc()['t'] ?? 0;
 $q_mi = $conn->query("SELECT COUNT(*) as t FROM pendaftaran WHERE pilihan_sekolah = 'MI'")->fetch_assoc()['t'] ?? 0;
 $q_mts = $conn->query("SELECT COUNT(*) as t FROM pendaftaran WHERE pilihan_sekolah = 'MTs'")->fetch_assoc()['t'] ?? 0;
 $q_ma = $conn->query("SELECT COUNT(*) as t FROM pendaftaran WHERE pilihan_sekolah = 'MA'")->fetch_assoc()['t'] ?? 0;
@@ -246,7 +247,7 @@ $pct_takho_putri = ($total_takho > 0) ? round(($q_takho_putri / $total_takho) * 
                     </div>
                     <div class="text-end">
                         <h3 class="m-0 fw-bold" style="color: #10B981;"><?= $q_lulus ?></h3>
-                        <div style="font-size: 0.85rem; color: #94a3b8;">Siswa Diterima</div>
+                        <div style="font-size: 0.85rem; color: #94a3b8;">Berkas Lengkap</div>
                     </div>
                 </div>
                 <div class="chart-container" style="height: 150px; margin-top: 10px;">
@@ -552,24 +553,24 @@ $pct_takho_putri = ($total_takho > 0) ? round(($q_takho_putri / $total_takho) * 
         });
 
         // 5. BAR CHART (Distribusi Jenjang Sekolah)
-        const ctxSchool = document.getElementById('schoolChart').getContext('2d');
-        const gradientBar = ctxSchool.createLinearGradient(0, 0, 0, 150);
-        gradientBar.addColorStop(0, '#10b981'); // Emerald
-        gradientBar.addColorStop(1, 'rgba(16, 185, 129, 0.1)');
+    const ctxSchool = document.getElementById('schoolChart').getContext('2d');
+    const gradientBar = ctxSchool.createLinearGradient(0, 0, 0, 150);
+    gradientBar.addColorStop(0, '#10b981'); // Emerald
+    gradientBar.addColorStop(1, 'rgba(16, 185, 129, 0.1)');
 
-        new Chart(ctxSchool, {
-            type: 'bar',
-            data: {
-                labels: ['MI', 'MTs', 'MA', 'SMK'],
-                datasets: [{
-                    label: 'Total Siswa',
-                    data: [<?= $q_mi ?>, <?= $q_mts ?>, <?= $q_ma ?>, <?= $q_smk ?>],
-                    backgroundColor: gradientBar,
-                    borderRadius: 6,
-                    barThickness: 25
-                }]
-            },
-            options: {
+    new Chart(ctxSchool, {
+        type: 'bar',
+        data: {
+            labels: ['RA', 'MI', 'MTs', 'MA', 'SMK'],
+            datasets: [{
+                label: 'Total Siswa',
+                data: [<?= $q_ra ?>, <?= $q_mi ?>, <?= $q_mts ?>, <?= $q_ma ?>, <?= $q_smk ?>],
+                backgroundColor: gradientBar,
+                borderRadius: 6,
+                barThickness: 25
+            }]
+        },
+        options: {
                 responsive: true, 
                 maintainAspectRatio: false,
                 plugins: { legend: { display: false } },

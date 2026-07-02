@@ -22,7 +22,7 @@ if (isset($_GET['filter']) && !empty($_GET['filter'])) {
     // Hindari SQL Injection
     $jenjang = mysqli_real_escape_string($conn, $_GET['filter']);
     // Pastikan filter valid sesuai pilihan yang ada
-    if (in_array($jenjang, ['MI', 'MTs', 'MA', 'SMK'])) {
+    if (in_array($jenjang, ['RA', 'MI', 'MTs', 'MA', 'SMK'])) {
         $filter_sekolah = " WHERE p.pilihan_sekolah = '$jenjang'";
         $judul_tambahan = "Jenjang $jenjang";
     }
