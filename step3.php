@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <style>
         :root {
@@ -25,6 +27,7 @@
             background-color: #f4f9f6;
             padding-top: 40px;
             padding-bottom: 60px;
+            display: none; /* Disembunyikan dulu sebelum cek token keamanan */
         }
 
         .form-container {
@@ -128,6 +131,12 @@
             box-shadow: 0 0 0 0.25rem rgba(13, 161, 91, 0.25);
         }
 
+        /* Styling saat input error / kosong */
+        .is-invalid {
+            border-color: #dc3545 !important;
+            background-color: #fff8f8;
+        }
+
         .btn-next {
             background-color: var(--primary-green);
             color: white;
@@ -198,19 +207,19 @@
                     </div>
                 </div>
 
-                <!-- Form Start -->
-                <form id="formStep3" action="step4.php" method="POST">
+                <!-- Form Start (Ditambah novalidate) -->
+                <form id="formStep3" action="step4.php" method="POST" novalidate>
                     
                     <!-- DATA AYAH -->
                     <h5 class="section-title"><i class="fas fa-user-tie me-2"></i>Data Ayah Kandung</h5>
                     <div class="row g-3">
                         <div class="col-md-12">
                             <label class="form-label">Nama Lengkap Ayah <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="ayah_nama" required>
+                            <input type="text" class="form-control req-field" name="ayah_nama" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Status Ayah <span class="text-danger">*</span></label>
-                            <select class="form-select" name="ayah_status" id="ayah_status" required onchange="toggleParentFields('ayah')">
+                            <select class="form-select req-field" name="ayah_status" id="ayah_status" required onchange="toggleParentFields('ayah')">
                                 <option value="Masih Hidup">Masih Hidup</option>
                                 <option value="Sudah Meninggal">Sudah Meninggal</option>
                                 <option value="Tidak Diketahui">Tidak Diketahui</option>
@@ -218,19 +227,19 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">NIK Ayah <span class="req-indicator-ayah text-danger">*</span></label>
-                            <input type="text" class="form-control" name="ayah_nik" required>
+                            <input type="text" class="form-control" name="ayah_nik" id="ayah_nik" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Tempat Lahir <span class="req-indicator-ayah text-danger">*</span></label>
-                            <input type="text" class="form-control" name="ayah_tempat_lahir" required>
+                            <input type="text" class="form-control" name="ayah_tempat_lahir" id="ayah_tempat_lahir" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Tanggal Lahir <span class="req-indicator-ayah text-danger">*</span></label>
-                            <input type="date" class="form-control" name="ayah_tanggal_lahir" required>
+                            <input type="date" class="form-control" name="ayah_tanggal_lahir" id="ayah_tanggal_lahir" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Pendidikan Terakhir <span class="req-indicator-ayah text-danger">*</span></label>
-                            <select class="form-select" name="ayah_pendidikan" required>
+                            <select class="form-select" name="ayah_pendidikan" id="ayah_pendidikan" required>
                                 <option value="">Pilih...</option>
                                 <option value="Tidak Sekolah">Tidak Sekolah</option>
                                 <option value="SD/Sederajat">SD/Sederajat</option>
@@ -243,7 +252,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Pekerjaan <span class="req-indicator-ayah text-danger">*</span></label>
-                            <select class="form-select" name="ayah_pekerjaan" required>
+                            <select class="form-select" name="ayah_pekerjaan" id="ayah_pekerjaan" required>
                                 <option value="">Pilih...</option>
                                 <option value="Tidak Bekerja">Tidak Bekerja</option>
                                 <option value="Pensiunan">Pensiunan</option>
@@ -267,7 +276,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Penghasilan / Bulan <span class="req-indicator-ayah text-danger">*</span></label>
-                            <select class="form-select" name="ayah_penghasilan" required>
+                            <select class="form-select" name="ayah_penghasilan" id="ayah_penghasilan" required>
                                 <option value="">Pilih...</option>
                                 <option value="Kurang dari Rp 1 Juta">< Rp 1.000.000</option>
                                 <option value="Rp 1 Juta - Rp 3 Juta">Rp 1.000.000 - Rp 3.000.000</option>
@@ -277,7 +286,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">No Handphone Ayah <span class="req-indicator-ayah text-danger">*</span></label>
-                            <input type="text" class="form-control" name="ayah_no_hp" placeholder="08xxxxxxxxxx" required>
+                            <input type="text" class="form-control" name="ayah_no_hp" id="ayah_no_hp" placeholder="08xxxxxxxxxx" required>
                         </div>
                     </div>
 
@@ -286,11 +295,11 @@
                     <div class="row g-3">
                         <div class="col-md-12">
                             <label class="form-label">Nama Lengkap Ibu <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="ibu_nama" required>
+                            <input type="text" class="form-control req-field" name="ibu_nama" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Status Ibu <span class="text-danger">*</span></label>
-                            <select class="form-select" name="ibu_status" id="ibu_status" required onchange="toggleParentFields('ibu')">
+                            <select class="form-select req-field" name="ibu_status" id="ibu_status" required onchange="toggleParentFields('ibu')">
                                 <option value="Masih Hidup">Masih Hidup</option>
                                 <option value="Sudah Meninggal">Sudah Meninggal</option>
                                 <option value="Tidak Diketahui">Tidak Diketahui</option>
@@ -298,19 +307,19 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">NIK Ibu <span class="req-indicator-ibu text-danger">*</span></label>
-                            <input type="text" class="form-control" name="ibu_nik" required>
+                            <input type="text" class="form-control" name="ibu_nik" id="ibu_nik" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Tempat Lahir <span class="req-indicator-ibu text-danger">*</span></label>
-                            <input type="text" class="form-control" name="ibu_tempat_lahir" required>
+                            <input type="text" class="form-control" name="ibu_tempat_lahir" id="ibu_tempat_lahir" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Tanggal Lahir <span class="req-indicator-ibu text-danger">*</span></label>
-                            <input type="date" class="form-control" name="ibu_tanggal_lahir" required>
+                            <input type="date" class="form-control" name="ibu_tanggal_lahir" id="ibu_tanggal_lahir" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Pendidikan Terakhir <span class="req-indicator-ibu text-danger">*</span></label>
-                            <select class="form-select" name="ibu_pendidikan" required>
+                            <select class="form-select" name="ibu_pendidikan" id="ibu_pendidikan" required>
                                 <option value="">Pilih...</option>
                                 <option value="Tidak Sekolah">Tidak Sekolah</option>
                                 <option value="SD/Sederajat">SD/Sederajat</option>
@@ -323,7 +332,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Pekerjaan <span class="req-indicator-ibu text-danger">*</span></label>
-                            <select class="form-select" name="ibu_pekerjaan" required>
+                            <select class="form-select" name="ibu_pekerjaan" id="ibu_pekerjaan" required>
                                 <option value="">Pilih...</option>
                                 <option value="Ibu Rumah Tangga">Ibu Rumah Tangga</option>
                                 <option value="Tidak Bekerja">Tidak Bekerja</option>
@@ -348,7 +357,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Penghasilan / Bulan <span class="req-indicator-ibu text-danger">*</span></label>
-                            <select class="form-select" name="ibu_penghasilan" required>
+                            <select class="form-select" name="ibu_penghasilan" id="ibu_penghasilan" required>
                                 <option value="">Pilih...</option>
                                 <option value="Tidak Berpenghasilan">Tidak Berpenghasilan</option>
                                 <option value="Kurang dari Rp 1 Juta">< Rp 1.000.000</option>
@@ -359,7 +368,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">No Handphone Ibu <span class="req-indicator-ibu text-danger">*</span></label>
-                            <input type="text" class="form-control" name="ibu_no_hp" placeholder="08xxxxxxxxxx" required>
+                            <input type="text" class="form-control" name="ibu_no_hp" id="ibu_no_hp" placeholder="08xxxxxxxxxx" required>
                         </div>
                     </div>
 
@@ -376,11 +385,11 @@
                         <div class="row g-3">
                             <div class="col-md-12">
                                 <label class="form-label">Nama Wali <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="wali_nama">
+                                <input type="text" class="form-control" name="wali_nama" id="wali_nama">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Hubungan dengan Santri <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="wali_hubungan" placeholder="Contoh: Paman, Kakek, Kakak">
+                                <input type="text" class="form-control" name="wali_hubungan" id="wali_hubungan" placeholder="Contoh: Paman, Kakek, Kakak">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">NIK Wali <span class="opt-label">(Opsional)</span></label>
@@ -388,7 +397,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Pendidikan Terakhir <span class="text-danger">*</span></label>
-                                <select class="form-select" name="wali_pendidikan">
+                                <select class="form-select" name="wali_pendidikan" id="wali_pendidikan">
                                     <option value="">Pilih...</option>
                                     <option value="Tidak Sekolah">Tidak Sekolah</option>
                                     <option value="SD/Sederajat">SD/Sederajat</option>
@@ -401,7 +410,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Pekerjaan <span class="text-danger">*</span></label>
-                                <select class="form-select" name="wali_pekerjaan">
+                                <select class="form-select" name="wali_pekerjaan" id="wali_pekerjaan">
                                     <option value="">Pilih...</option>
                                     <option value="Tidak Bekerja">Tidak Bekerja</option>
                                     <option value="Pensiunan">Pensiunan</option>
@@ -425,7 +434,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Penghasilan / Bulan <span class="text-danger">*</span></label>
-                                <select class="form-select" name="wali_penghasilan">
+                                <select class="form-select" name="wali_penghasilan" id="wali_penghasilan">
                                     <option value="">Pilih...</option>
                                     <option value="Kurang dari Rp 1 Juta">< Rp 1.000.000</option>
                                     <option value="Rp 1 Juta - Rp 3 Juta">Rp 1.000.000 - Rp 3.000.000</option>
@@ -456,11 +465,31 @@
     </div>
 </div>
 
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
+    // --- SECURITY CHECK (PENJAGA PINTU) ---
+    // Cek apakah step 2 sudah diselesaikan
+    if (!localStorage.getItem('step2_completed')) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Akses Ditolak!',
+            text: 'Anda harus menyelesaikan Langkah 2 terlebih dahulu.',
+            confirmButtonColor: '#0da15b',
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        }).then(() => {
+            window.location.href = 'step2.php';
+        });
+    } else {
+        // Jika aman, tampilkan halaman
+        document.body.style.display = 'block';
+    }
+
     // --- Fungsi Cerdas Toggle Status Ayah / Ibu ---
     function toggleParentFields(type) {
         const status = document.getElementById(`${type}_status`).value;
-        // Daftar nama field yang akan diubah status Wajib/Opsional nya
         const fields = ['nik', 'tempat_lahir', 'tanggal_lahir', 'pendidikan', 'pekerjaan', 'penghasilan', 'no_hp'];
         
         // Jika status "Tidak Diketahui", field jadi Opsional
@@ -468,23 +497,27 @@
 
         fields.forEach(f => {
             const inputName = `${type}_${f}`;
-            const inputEl = document.querySelector(`[name="${inputName}"]`);
+            const inputEl = document.getElementById(inputName);
             
-            // Cari label dari input ini untuk mengubah tanda bintang (*)
-            const label = inputEl.closest('div').querySelector('label');
-            const indicator = label.querySelector(`.req-indicator-${type}`);
+            if(inputEl) {
+                const label = inputEl.closest('div').querySelector('label');
+                const indicator = label.querySelector(`.req-indicator-${type}`);
 
-            if (isRequired) {
-                inputEl.setAttribute('required', 'required');
-                if(indicator) {
-                    indicator.className = `req-indicator-${type} text-danger`;
-                    indicator.innerHTML = '*';
-                }
-            } else {
-                inputEl.removeAttribute('required');
-                if(indicator) {
-                    indicator.className = `req-indicator-${type} opt-label`;
-                    indicator.innerHTML = '(Opsional)';
+                if (isRequired) {
+                    inputEl.setAttribute('required', 'required');
+                    inputEl.classList.add('req-field');
+                    if(indicator) {
+                        indicator.className = `req-indicator-${type} text-danger`;
+                        indicator.innerHTML = '*';
+                    }
+                } else {
+                    inputEl.removeAttribute('required');
+                    inputEl.classList.remove('req-field');
+                    inputEl.classList.remove('is-invalid'); // Bersihkan error merah
+                    if(indicator) {
+                        indicator.className = `req-indicator-${type} opt-label`;
+                        indicator.innerHTML = '(Opsional)';
+                    }
                 }
             }
         });
@@ -497,12 +530,19 @@
         formWali.style.display = isChecked ? 'block' : 'none';
         
         // Setup required attributes dynamically based on toggle
-        const waliInputs = formWali.querySelectorAll('input[name="wali_nama"], input[name="wali_hubungan"], select[name="wali_pendidikan"], select[name="wali_pekerjaan"], select[name="wali_penghasilan"]');
-        waliInputs.forEach(input => {
-            if (isChecked) {
-                input.setAttribute('required', 'required');
-            } else {
-                input.removeAttribute('required');
+        const waliInputs = ['wali_nama', 'wali_hubungan', 'wali_pendidikan', 'wali_pekerjaan', 'wali_penghasilan'];
+        
+        waliInputs.forEach(id => {
+            const input = document.getElementById(id);
+            if(input) {
+                if (isChecked) {
+                    input.setAttribute('required', 'required');
+                    input.classList.add('req-field');
+                } else {
+                    input.removeAttribute('required');
+                    input.classList.remove('req-field');
+                    input.classList.remove('is-invalid');
+                }
             }
         });
         
@@ -512,21 +552,29 @@
         localStorage.setItem(formId, JSON.stringify(savedData));
     }
 
-    // --- FUNGSI AUTO-SAVE ---
+    // --- FUNGSI AUTO-SAVE & VALIDASI ---
     const formId = "formStep3";
     
     document.addEventListener("DOMContentLoaded", function() {
         const formElements = document.querySelectorAll(`#${formId} input:not([type="checkbox"]), #${formId} select`);
         const savedData = JSON.parse(localStorage.getItem(formId) || "{}");
         
-        // Restore Data
+        // Restore Data & Event Hapus Merah
         formElements.forEach(el => {
             if (savedData[el.name]) {
                 el.value = savedData[el.name];
             }
+            
+            // Hapus class invalid saat user mulai mengetik
+            el.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+            });
+            el.addEventListener('change', function() {
+                this.classList.remove('is-invalid');
+            });
         });
 
-        // Panggil fungsi toggle untuk memastikan form tersetting benar setelah reload
+        // Terapkan toggle (Penting agar yang tak diketahui/wali tidak diminta required)
         toggleParentFields('ayah');
         toggleParentFields('ibu');
 
@@ -543,6 +591,43 @@
                 dataObj[el.name] = el.value;
             });
             localStorage.setItem(formId, JSON.stringify(dataObj));
+        });
+
+        // VALIDASI SAAT SUBMIT
+        const form = document.getElementById(formId);
+        form.addEventListener("submit", function(event) {
+            let isValid = true;
+            let firstInvalidElement = null;
+            
+            // Cari semua elemen yang saat ini aktif memiliki class 'req-field'
+            const requiredFields = this.querySelectorAll('.req-field');
+            
+            requiredFields.forEach(field => {
+                if (!field.value || field.value.trim() === '') {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                    if (!firstInvalidElement) firstInvalidElement = field;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+
+            if (!isValid) {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Formulir Belum Lengkap',
+                    text: 'Mohon isi semua kolom data orang tua/wali yang bertanda bintang merah (*).',
+                    confirmButtonColor: '#0da15b'
+                }).then(() => {
+                    if (firstInvalidElement) firstInvalidElement.focus();
+                });
+            } else {
+                // Form Valid! Beri kunci untuk masuk ke Step 4
+                localStorage.setItem('step3_completed', 'true');
+            }
         });
     });
 </script>

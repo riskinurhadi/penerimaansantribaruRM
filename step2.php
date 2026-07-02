@@ -11,6 +11,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <style>
         :root {
@@ -28,6 +30,7 @@
             background-color: #f4f9f6;
             padding-top: 40px;
             padding-bottom: 60px;
+            display: none; /* Disembunyikan dulu sebelum cek token keamanan */
         }
 
         .form-container {
@@ -128,6 +131,12 @@
             box-shadow: 0 0 0 0.25rem rgba(13, 161, 91, 0.25);
         }
 
+        /* Styling saat input error / kosong */
+        .is-invalid {
+            border-color: #dc3545 !important;
+            background-color: #fff8f8;
+        }
+
         .btn-next {
             background-color: var(--primary-green);
             color: white;
@@ -198,14 +207,14 @@
                     </div>
                 </div>
 
-                <!-- Form Start -->
-                <form id="formStep2" action="step3.php" method="POST">
+                <!-- Form Start (Ditambah novalidate) -->
+                <form id="formStep2" action="step3.php" method="POST" novalidate>
                     
                     <h5 class="section-title"><i class="fas fa-map-marker-alt me-2"></i>Alamat Lengkap (Sesuai KK)</h5>
                     <div class="row g-3">
                         <div class="col-md-12">
                             <label class="form-label">Alamat Jalan / Dusun <span class="text-danger">*</span></label>
-                            <textarea class="form-control" name="alamat_lengkap" rows="2" placeholder="Contoh: Jl. Sudirman No. 12, Dusun Mawar" required></textarea>
+                            <textarea class="form-control req-field" name="alamat_lengkap" rows="2" placeholder="Contoh: Jl. Sudirman No. 12, Dusun Mawar" required></textarea>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">RT <span class="opt-label">(Opsional)</span></label>
@@ -219,25 +228,25 @@
                         <!-- Area Dropdown Berjenjang (Integrasi API se-Indonesia) -->
                         <div class="col-md-6">
                             <label class="form-label">Provinsi <span class="text-danger">*</span></label>
-                            <select class="form-select" name="provinsi" id="provinsi" required onchange="loadKota()">
+                            <select class="form-select req-field" name="provinsi" id="provinsi" required onchange="loadKota()">
                                 <option value="">Loading data...</option>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Kota/Kabupaten <span class="text-danger">*</span></label>
-                            <select class="form-select" name="kota_kabupaten" id="kota" required onchange="loadKecamatan()" disabled>
+                            <select class="form-select req-field" name="kota_kabupaten" id="kota" required onchange="loadKecamatan()" disabled>
                                 <option value="">-- Pilih Kota/Kabupaten --</option>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Kecamatan <span class="text-danger">*</span></label>
-                            <select class="form-select" name="kecamatan" id="kecamatan" required onchange="loadDesa()" disabled>
+                            <select class="form-select req-field" name="kecamatan" id="kecamatan" required onchange="loadDesa()" disabled>
                                 <option value="">-- Pilih Kecamatan --</option>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Desa/Kelurahan <span class="text-danger">*</span></label>
-                            <select class="form-select" name="desa_kelurahan" id="desa" required disabled onchange="triggerSave()">
+                            <select class="form-select req-field" name="desa_kelurahan" id="desa" required disabled onchange="triggerSave()">
                                 <option value="">-- Pilih Desa/Kelurahan --</option>
                             </select>
                         </div>
@@ -248,7 +257,7 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">No WhatsApp / HP <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="no_whatsapp" placeholder="08xxxxxxxxxx" required>
+                            <input type="text" class="form-control req-field" name="no_whatsapp" placeholder="08xxxxxxxxxx" required>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Email Aktif</label>
@@ -273,7 +282,28 @@
     </div>
 </div>
 
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
+    // --- SECURITY CHECK (PENJAGA PINTU) ---
+    // Cek apakah step 1 sudah diselesaikan (ada token di LocalStorage)
+    if (!localStorage.getItem('step1_completed')) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Akses Ditolak!',
+            text: 'Anda harus menyelesaikan Langkah 1 terlebih dahulu.',
+            confirmButtonColor: '#0da15b',
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        }).then(() => {
+            window.location.href = 'step1.php';
+        });
+    } else {
+        // Jika aman, tampilkan halaman
+        document.body.style.display = 'block';
+    }
+
     const apiBase = "https://www.emsifa.com/api-wilayah-indonesia/api";
     const formId = "formStep2";
 
@@ -290,7 +320,6 @@
             
             let options = '<option value="">-- Pilih Provinsi --</option>';
             provinces.forEach(p => {
-                // value diisi nama wilayah agar di database tersimpan namanya, bukan kodenya
                 options += `<option value="${p.name}" data-id="${p.id}">${p.name}</option>`;
             });
             document.getElementById('provinsi').innerHTML = options;
@@ -310,6 +339,11 @@
         desaSelect.innerHTML = '<option value="">-- Pilih Desa/Kelurahan --</option>';
         
         kotaSelect.disabled = true; kecSelect.disabled = true; desaSelect.disabled = true;
+        
+        // Hapus class is-invalid jika ada perubahan
+        kotaSelect.classList.remove('is-invalid');
+        kecSelect.classList.remove('is-invalid');
+        desaSelect.classList.remove('is-invalid');
 
         if(!provId) {
             kotaSelect.innerHTML = '<option value="">-- Pilih Kota/Kabupaten --</option>';
@@ -341,6 +375,9 @@
         desaSelect.innerHTML = '<option value="">-- Pilih Desa/Kelurahan --</option>';
         
         kecSelect.disabled = true; desaSelect.disabled = true;
+        
+        kecSelect.classList.remove('is-invalid');
+        desaSelect.classList.remove('is-invalid');
 
         if(!kotaId) {
             kecSelect.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
@@ -369,6 +406,8 @@
 
         desaSelect.innerHTML = '<option value="">Loading...</option>';
         desaSelect.disabled = true;
+        
+        desaSelect.classList.remove('is-invalid');
 
         if(!kecId) {
             desaSelect.innerHTML = '<option value="">-- Pilih Desa/Kelurahan --</option>';
@@ -401,7 +440,7 @@
         localStorage.setItem(formId, JSON.stringify(dataObj));
     }
 
-    // --- INisialisasi & Restore Data ---
+    // --- INISIALISASI & RESTORE DATA ---
     document.addEventListener("DOMContentLoaded", async function() {
         // 1. Muat data Provinsi pertama kali
         await loadProvinsi();
@@ -414,6 +453,14 @@
             if (savedData[el.name] && el.tagName !== 'SELECT') {
                 el.value = savedData[el.name];
             }
+            
+            // Hapus class invalid saat user mengetik
+            el.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+            });
+            el.addEventListener('change', function() {
+                this.classList.remove('is-invalid');
+            });
         });
 
         // 3. Restore data Dropdown Berjenjang secara berurutan agar ID-nya valid
@@ -421,7 +468,6 @@
             const provSelect = document.getElementById('provinsi');
             provSelect.value = savedData['provinsi'];
             
-            // Cek apakah data benar-benar ada di option (validasi localstorage lama vs baru)
             if(provSelect.selectedIndex > 0) {
                 await loadKota();
                 
@@ -451,6 +497,43 @@
 
         // 4. Tambahkan event listener untuk simpan setiap ketikan
         document.getElementById(formId).addEventListener("input", triggerSave);
+        
+        // --- 5. VALIDASI SUBMIT & KUNCI STEP 3 ---
+        const form = document.getElementById(formId);
+        form.addEventListener("submit", function(event) {
+            let isValid = true;
+            let firstInvalidElement = null;
+            const requiredFields = this.querySelectorAll('.req-field');
+            
+            // Kita validasi manual karena beberapa select (kota/kecamatan) mungkin sedang 'disabled'
+            // Native HTML5 checkValidity() akan mengabaikan elemen yang disabled.
+            requiredFields.forEach(field => {
+                if (!field.value || field.value.trim() === '') {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                    if (!firstInvalidElement) firstInvalidElement = field;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+
+            if (!isValid) {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Formulir Belum Lengkap',
+                    text: 'Mohon lengkapi alamat secara mendetail (termasuk pilihan Desa/Kelurahan).',
+                    confirmButtonColor: '#0da15b'
+                }).then(() => {
+                    if (firstInvalidElement) firstInvalidElement.focus();
+                });
+            } else {
+                // Form Valid! Beri kunci untuk masuk ke Step 3
+                localStorage.setItem('step2_completed', 'true');
+            }
+        });
     });
 </script>
 
