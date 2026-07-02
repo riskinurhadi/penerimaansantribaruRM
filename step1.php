@@ -199,7 +199,6 @@
                             <label class="form-label">Sekolah Formal Yang Dipilih <span class="text-danger">*</span></label>
                             <select class="form-select" name="pilihan_sekolah" required>
                                 <option value="">-- Pilih Jenjang Sekolah --</option>
-                                <option value="RA">RA</option>
                                 <option value="MI">MI</option>
                                 <option value="MTs">MTs</option>
                                 <option value="MA">MA</option>
