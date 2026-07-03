@@ -44,7 +44,7 @@ $pdf->SetAutoPageBreak(true, 20);
 // --- KOP SURAT ---
 $header_path = 'admin/header/header_keuangan.png';
 if (file_exists($header_path)) {
-    $pdf->Image($header_path, 15, 15, 180);
+    $pdf->Image($header_path, 5, 5, 180);
     $pdf->SetY(50); 
 } else {
     $pdf->SetFont('Arial', 'B', 14);
