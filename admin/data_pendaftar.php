@@ -36,7 +36,7 @@ if ($q_foto && $q_foto->num_rows > 0) {
 // ==========================================
 $filter = isset($_GET['filter']) ? mysqli_real_escape_string($conn, $_GET['filter']) : '';
 $where_clause = "";
-if (in_array($filter, ['MI', 'MTs', 'MA', 'SMK'])) {
+if (in_array($filter, ['RA', 'MI', 'MTs', 'MA', 'SMK'])) {
     $where_clause = " WHERE p.pilihan_sekolah = '$filter' ";
 }
 
@@ -98,6 +98,8 @@ $result = $conn->query($query);
         .btn-act-view:hover { background-color: #0284c7; transform: translateY(-2px);}
         .btn-act-edit { background-color: #fef08a; color: #ca8a04; }
         .btn-act-edit:hover { background-color: #fde047; color: #a16207; transform: translateY(-2px);}
+        .btn-act-print { background-color: #1e293b; color: white; }
+        .btn-act-print:hover { background-color: #0f172a; color: white; transform: translateY(-2px);}
         .btn-act-delete { background-color: #fee2e2; color: #dc2626; }
         .btn-act-delete:hover { background-color: #fca5a5; color: #b91c1c; transform: translateY(-2px);}
 
@@ -143,6 +145,7 @@ $result = $conn->query($query);
                     <!-- FILTER JENJANG SEKOLAH -->
                     <select class="form-select form-select-sm ms-3 fw-medium text-primary-green border-primary-green" onchange="window.location.href='?filter='+this.value" style="width: auto; border-radius: 8px;">
                         <option value="">Semua Jenjang</option>
+                        <option value="RA" <?= $filter == 'RA' ? 'selected' : '' ?>>Khusus RA</option>
                         <option value="MI" <?= $filter == 'MI' ? 'selected' : '' ?>>Khusus MI</option>
                         <option value="MTs" <?= $filter == 'MTs' ? 'selected' : '' ?>>Khusus MTs</option>
                         <option value="MA" <?= $filter == 'MA' ? 'selected' : '' ?>>Khusus MA</option>
@@ -201,6 +204,7 @@ $result = $conn->query($query);
                                     <div class="d-flex justify-content-center">
                                         <a href="detail_pendaftar.php?id=<?= $row['id'] ?>" class="btn-act btn-act-view" title="Detail"><i class="fas fa-eye"></i></a>
                                         <a href="edit_pendaftar.php?id=<?= $row['id'] ?>" class="btn-act btn-act-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                                        <a href="../cetak_bukti.php?id=<?= $row['id'] ?>" target="_blank" class="btn-act btn-act-print" title="Cetak Bukti / Kartu Kendali"><i class="fas fa-print"></i></a>
                                         
                                         <?php if ($role == 'Developer' || $role == 'Super Admin'): ?>
                                             <button class="btn-act btn-act-delete" title="Hapus" onclick="konfirmasiHapus(<?= $row['id'] ?>, '<?= addslashes($row['nama_lengkap']) ?>')"><i class="fas fa-trash"></i></button>
