@@ -87,8 +87,12 @@ try {
     $nik = bersihkan($conn, $_POST['nik']);
     $tempat_lahir = bersihkan($conn, $_POST['tempat_lahir']);
     
-    // PERBAIKAN: Penanganan Tanggal Lahir Kosong
-    $tanggal_lahir = !empty($_POST['tanggal_lahir']) ? "'" . bersihkan($conn, $_POST['tanggal_lahir']) . "'" : "NULL";
+    // PERBAIKAN: Deteksi dini jika kalender (tanggal lahir) lolos / kosong karena bug browser
+    $raw_tgl_lahir = bersihkan($conn, $_POST['tanggal_lahir'] ?? '');
+    if (empty($raw_tgl_lahir)) {
+        throw new Exception("ERR_TGL_LAHIR_KOSONG");
+    }
+    $tanggal_lahir = "'" . $raw_tgl_lahir . "'";
     
     $jenis_kelamin = bersihkan($conn, $_POST['jenis_kelamin']);
     $agama = bersihkan($conn, $_POST['agama']);
@@ -221,7 +225,9 @@ try {
     // ==============================================================================
     $pesan_error = "";
 
-    if (strpos($raw_error, 'Duplicate entry') !== false) {
+    if ($raw_error === "ERR_TGL_LAHIR_KOSONG") {
+        $pesan_error = "<b style='color:#dc3545;'>Tanggal Lahir Terlepas! (Bug Browser)</b><br>Sistem mendeteksi data Tanggal Lahir Santri tidak tersimpan. Hal ini sering terjadi jika aplikasi kalender di HP Anda ditutup tanpa mengklik bagian lain.<br><br><b>Solusi:</b> Silakan tekan tombol kembali, lalu masuk ke <b>Langkah 1</b> dan isi ulang tanggal lahirnya.";
+    } elseif (strpos($raw_error, 'Duplicate entry') !== false) {
         if (strpos($raw_error, 'nisn') !== false) {
             $pesan_error = "<b style='color:#dc3545;'>NISN Sudah Terdaftar!</b><br>NISN <b>".$_POST['nisn']."</b> sudah pernah digunakan mendaftar. Silakan periksa kembali atau hubungi panitia jika ini adalah kesalahan.";
         } elseif (strpos($raw_error, 'nik') !== false) {
@@ -234,11 +240,11 @@ try {
             $pesan_error = "<b style='color:#dc3545;'>Tanggal Lahir Ayah Tidak Valid!</b><br>Pastikan Anda mengisi formulir tanggal lahir Ayah dengan benar.";
         } elseif (strpos($raw_error, 'ibu_tanggal_lahir') !== false) {
             $pesan_error = "<b style='color:#dc3545;'>Tanggal Lahir Ibu Tidak Valid!</b><br>Pastikan Anda mengisi formulir tanggal lahir Ibu dengan benar.";
-        } elseif (strpos($raw_error, 'tanggal_lahir') !== false) {
-            $pesan_error = "<b style='color:#dc3545;'>Tanggal Lahir Santri Tidak Valid!</b><br>Pastikan Anda mengisi formulir tanggal lahir Calon Santri dengan benar.";
         } else {
             $pesan_error = "<b style='color:#dc3545;'>Kesalahan Format Tanggal!</b><br>Ada form isian tanggal yang terlewat atau formatnya tidak sesuai dengan standar.";
         }
+    } elseif (strpos($raw_error, 'cannot be null') !== false) {
+        $pesan_error = "<b style='color:#dc3545;'>Ada Data Wajib yang Kosong!</b><br>Sistem mendeteksi ada isian wajib yang terlewat atau belum tersimpan dengan baik. Silakan cek kembali formulir Anda.";
     } elseif (strpos($raw_error, 'Data too long') !== false) {
         $pesan_error = "<b style='color:#dc3545;'>Teks Terlalu Panjang!</b><br>Ada kolom isian formulir yang jumlah hurufnya melebihi batas maksimal. Mohon persingkat isian Anda (misalnya pada bagian Nama atau Alamat).";
     } elseif (strpos($raw_error, 'File wajib') !== false) {
