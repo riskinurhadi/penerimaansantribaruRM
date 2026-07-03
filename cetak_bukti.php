@@ -136,7 +136,7 @@ $pdf->Cell(60, $rowHeight, ' Pengesahan Surat Perjanjian', 1, 0, 'L');
 $pdf->Cell(55, $rowHeight, '', 1, 1, 'C');
 
 // --- CATATAN PERINGATAN BAWAH ---
-$pdf->Ln(8);
+$pdf->Ln(5);
 $pdf->SetFont('Arial', 'B', 10);
 $pdf->Cell(0, 6, 'Catatan Penting Calon Santri:', 0, 1, 'L');
 $pdf->SetFont('Arial', '', 10);
@@ -145,7 +145,7 @@ $pdf->Cell(5, 6, '-', 0, 0); $pdf->Cell(0, 6, 'Semua berkas asli (KK, Akta Kelah
 $pdf->Cell(5, 6, '-', 0, 0); $pdf->Cell(0, 6, 'Bagi yang berkendala, silakan tunjukkan lembar ini ke petugas panitia untuk meminta arahan.', 0, 1);
 
 // --- PENGINGAT DI BAWAH ---
-$pdf->SetY(274);
+$pdf->SetY(273);
 $pdf->SetFont('Arial', 'I', 8);
 $pdf->SetTextColor(100, 100, 100);
 $pdf->Cell(0, 5, '*Kuitansi ini dicetak otomatis oleh Sistem Informasi PSB - Pondok Pesantren Raudlatul Muta\'allimin.', 0, 1, 'C');
