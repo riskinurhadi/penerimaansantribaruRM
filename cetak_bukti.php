@@ -106,7 +106,7 @@ $pdf->SetFillColor(200, 200, 200); // Abu-abu gelap untuk Header
 $pdf->Cell(10, 10, 'NO', 1, 0, 'C', true);
 $pdf->Cell(45, 10, 'POS PANITIA', 1, 0, 'C', true);
 $pdf->Cell(60, 10, 'KETERANGAN', 1, 0, 'C', true);
-$pdf->Cell(55, 10, 'PARAF & STEMPEL', 1, 1, 'C', true);
+$pdf->Cell(55, 10, 'PARAF PETUGAS', 1, 1, 'C', true);
 
 $pdf->SetFont('Arial', '', 10);
 $rowHeight = 18; // Tinggi kolom cukup besar untuk tanda tangan
