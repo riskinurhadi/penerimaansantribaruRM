@@ -194,10 +194,8 @@ try {
     $path_ijazah = uploadFile('ijazah_skhu', $dir_berkas, $no_pendaftaran);
     $path_piagam = uploadFile('piagam_prestasi', $dir_berkas, $no_pendaftaran);
 
-    // Mencegah error jika wajib tapi gagal upload
-    if (!$path_pas_foto || !$path_kk || !$path_ktp) {
-        throw new Exception("File wajib (Foto, KK, atau KTP) gagal diunggah atau ukurannya terlalu besar.");
-    }
+    // Mencegah error jika wajib tapi gagal upload (DIHAPUS KARENA SEKARANG OPSIONAL)
+    // Blok validasi (!$path_pas_foto || !$path_kk || !$path_ktp) telah dihapus
 
     $sql_berkas = "INSERT INTO data_berkas (pendaftaran_id, pas_foto, ijazah_skhu, akta_kelahiran, ktp_ortu, kartu_keluarga, piagam_prestasi) 
                    VALUES ($pendaftaran_id, '$path_pas_foto', '$path_ijazah', '$path_akta', '$path_ktp', '$path_kk', '$path_piagam')";

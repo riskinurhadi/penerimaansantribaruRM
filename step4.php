@@ -325,9 +325,9 @@
                         
                         <!-- 1. PAS FOTO -->
                         <div class="col-md-6">
-                            <label class="form-label">Pas Foto (3x4) <span class="text-danger">*</span></label>
+                            <label class="form-label">Pas Foto (3x4) <span class="opt-label">(Opsional)</span></label>
                             <div class="input-group">
-                                <input type="file" class="form-control file-input" name="pas_foto" id="inputPasFoto" accept=".jpg, .jpeg, .png" required>
+                                <input type="file" class="form-control file-input" name="pas_foto" id="inputPasFoto" accept=".jpg, .jpeg, .png">
                                 <button class="btn btn-outline-success btn-camera" type="button" data-bs-toggle="modal" data-bs-target="#cameraModal" data-target="PasFoto">
                                     <i class="fas fa-camera"></i> Kamera
                                 </button>
@@ -341,9 +341,9 @@
 
                         <!-- 2. KARTU KELUARGA -->
                         <div class="col-md-6">
-                            <label class="form-label">Kartu Keluarga (KK) <span class="text-danger">*</span></label>
+                            <label class="form-label">Kartu Keluarga (KK) <span class="opt-label">(Opsional)</span></label>
                             <div class="input-group">
-                                <input type="file" class="form-control file-input" name="kartu_keluarga" id="inputKK" accept=".jpg, .jpeg, .png, .pdf" required>
+                                <input type="file" class="form-control file-input" name="kartu_keluarga" id="inputKK" accept=".jpg, .jpeg, .png, .pdf">
                                 <button class="btn btn-outline-success btn-camera" type="button" data-bs-toggle="modal" data-bs-target="#cameraModal" data-target="KK">
                                     <i class="fas fa-camera"></i> Kamera
                                 </button>
@@ -357,9 +357,9 @@
 
                         <!-- 3. KTP ORTU -->
                         <div class="col-md-6">
-                            <label class="form-label">KTP Orang Tua / Wali <span class="text-danger">*</span></label>
+                            <label class="form-label">KTP Orang Tua / Wali <span class="opt-label">(Opsional)</span></label>
                             <div class="input-group">
-                                <input type="file" class="form-control file-input" name="ktp_ortu" id="inputKtp" accept=".jpg, .jpeg, .png, .pdf" required>
+                                <input type="file" class="form-control file-input" name="ktp_ortu" id="inputKtp" accept=".jpg, .jpeg, .png, .pdf">
                                 <button class="btn btn-outline-success btn-camera" type="button" data-bs-toggle="modal" data-bs-target="#cameraModal" data-target="Ktp">
                                     <i class="fas fa-camera"></i> Kamera
                                 </button>
