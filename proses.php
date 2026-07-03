@@ -52,7 +52,7 @@ try {
     $status_masuk = bersihkan($conn, $_POST['status_masuk']);
     
     // Tentukan Prefix berdasarkan status masuk
-    $prefix = "Santri Baru"; // Default Santri Baru
+    $prefix = "SB"; // Default Santri Baru
     if ($status_masuk == "Pindahan") $prefix = "PD";
     if ($status_masuk == "Drop Out") $prefix = "DO";
 
