@@ -145,7 +145,7 @@ $pdf->Cell(5, 6, '-', 0, 0); $pdf->Cell(0, 6, 'Semua berkas asli (KK, Akta Kelah
 $pdf->Cell(5, 6, '-', 0, 0); $pdf->Cell(0, 6, 'Bagi yang berkendala, silakan tunjukkan lembar ini ke petugas panitia untuk meminta arahan.', 0, 1);
 
 // --- PENGINGAT DI BAWAH ---
-$pdf->SetY(273);
+$pdf->SetY(272);
 $pdf->SetFont('Arial', 'I', 8);
 $pdf->SetTextColor(100, 100, 100);
 $pdf->Cell(0, 5, '*Kuitansi ini dicetak otomatis oleh Sistem Informasi PSB - Pondok Pesantren Raudlatul Muta\'allimin.', 0, 1, 'C');
