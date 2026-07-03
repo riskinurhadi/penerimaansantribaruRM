@@ -148,7 +148,7 @@ $pdf->Cell(5, 6, '-', 0, 0); $pdf->Cell(0, 6, 'Bagi yang berkendala, silakan tun
 $pdf->SetY(272);
 $pdf->SetFont('Arial', 'I', 8);
 $pdf->SetTextColor(100, 100, 100);
-$pdf->Cell(0, 5, '*Dicetak otomatis oleh Sistem Informasi PSB - Pondok Pesantren Raudlatul Muta\'allimin V1.03', 0, 1, 'C');
+$pdf->Cell(0, 5, '*Dicetak otomatis oleh Sistem Informasi PSB - Pondok Pesantren Raudlatul Muta\'allimin Versi 1.0.3', 0, 1, 'C');
 
 
 // Output PDF (Langsung ditampilkan di browser / siap diprint)
