@@ -65,7 +65,7 @@ $pdf->SetFont('Arial', 'B', 14);
 $pdf->Cell(0, 8, 'TANDA BUKTI PENDAFTARAN SANTRI BARU', 0, 1, 'C');
 $pdf->SetFont('Arial', '', 11);
 $pdf->Cell(0, 5, 'Tahun Ajaran 2026 / 2027', 0, 1, 'C');
-$pdf->Ln(8);
+$pdf->Ln(5);
 
 // --- A. IDENTITAS SANTRI ---
 $pdf->SetFillColor(241, 245, 249); // Abu-abu Terang
