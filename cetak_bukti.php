@@ -114,12 +114,12 @@ $rowHeight = 18; // Tinggi kolom cukup besar untuk tanda tangan
 // Pos 1: TU / Pendaftaran
 $pdf->Cell(10, $rowHeight, '1', 1, 0, 'C');
 $pdf->Cell(45, $rowHeight, ' Pos Pendaftaran', 1, 0, 'L');
-$pdf->Cell(60, $rowHeight, ' Verifikasi Pendaftaran dan Dokumen', 1, 0, 'L');
+$pdf->Cell(60, $rowHeight, ' Verifikasi Pendaftaran', 1, 0, 'L');
 $pdf->Cell(55, $rowHeight, '', 1, 1, 'C');
 
 // Pos 2: Kesehatan
 $pdf->Cell(10, $rowHeight, '2', 1, 0, 'C');
-$pdf->Cell(45, $rowHeight, ' Pos Kesehatan (UKS)', 1, 0, 'L');
+$pdf->Cell(45, $rowHeight, ' Pos Kesehatan', 1, 0, 'L');
 $pdf->Cell(60, $rowHeight, ' Cek Fisik & Rekam Medis', 1, 0, 'L');
 $pdf->Cell(55, $rowHeight, '', 1, 1, 'C');
 
