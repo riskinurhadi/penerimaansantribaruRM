@@ -88,7 +88,7 @@ printRow($pdf, 'Jenis Kelamin', $data['jenis_kelamin']);
 printRow($pdf, 'Jenjang Tujuan', $data['pilihan_sekolah']);
 printRow($pdf, 'Program Takhosush', $data['program_takhosush'] == 'Ya' ? 'Mengikuti' : 'Tidak (Reguler)');
 printRow($pdf, 'Waktu Mendaftar', date('d/m/Y H:i', strtotime($data['created_at'])) . ' WIB');
-$pdf->Ln(8);
+$pdf->Ln(5);
 
 // --- B. KARTU KENDALI ADMINISTRASI ---
 $pdf->SetFillColor(241, 245, 249);
