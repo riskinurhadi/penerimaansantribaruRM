@@ -144,6 +144,13 @@ $pdf->Cell(5, 6, '-', 0, 0); $pdf->Cell(0, 6, 'Harap simpan lembar Tanda Bukti P
 $pdf->Cell(5, 6, '-', 0, 0); $pdf->Cell(0, 6, 'Semua berkas asli (KK, Akta Kelahiran, dll) diharap dibawa saat menyerahkan lembar ini.', 0, 1);
 $pdf->Cell(5, 6, '-', 0, 0); $pdf->Cell(0, 6, 'Bagi yang berkendala, silakan tunjukkan lembar ini ke petugas panitia untuk meminta arahan.', 0, 1);
 
+// --- PENGINGAT DI BAWAH ---
+$pdf->SetY(265);
+$pdf->SetFont('Arial', 'I', 8);
+$pdf->SetTextColor(100, 100, 100);
+$pdf->Cell(0, 5, '*Kuitansi ini dicetak otomatis oleh Sistem Informasi PSB - Pondok Pesantren Raudlatul Muta\'allimin.', 0, 1, 'C');
+
+
 // Output PDF (Langsung ditampilkan di browser / siap diprint)
 $pdf->Output('I', 'Bukti_Pendaftaran_'.$data['no_pendaftaran'].'.pdf');
 ?>
