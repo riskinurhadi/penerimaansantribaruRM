@@ -86,7 +86,10 @@ try {
     $nisn = bersihkan($conn, $_POST['nisn']);
     $nik = bersihkan($conn, $_POST['nik']);
     $tempat_lahir = bersihkan($conn, $_POST['tempat_lahir']);
-    $tanggal_lahir = bersihkan($conn, $_POST['tanggal_lahir']);
+    
+    // PERBAIKAN: Penanganan Tanggal Lahir Kosong
+    $tanggal_lahir = !empty($_POST['tanggal_lahir']) ? "'" . bersihkan($conn, $_POST['tanggal_lahir']) . "'" : "NULL";
+    
     $jenis_kelamin = bersihkan($conn, $_POST['jenis_kelamin']);
     $agama = bersihkan($conn, $_POST['agama']);
     $hobi = bersihkan($conn, $_POST['hobi']);
@@ -95,7 +98,7 @@ try {
     $no_kip = bersihkan($conn, $_POST['no_kip']);
 
     $sql_diri = "INSERT INTO data_diri (pendaftaran_id, nama_lengkap, nisn, nik, tempat_lahir, tanggal_lahir, jenis_kelamin, agama, hobi, anak_ke, jumlah_saudara, no_kip) 
-                 VALUES ($pendaftaran_id, '$nama_lengkap', '$nisn', '$nik', '$tempat_lahir', '$tanggal_lahir', '$jenis_kelamin', '$agama', '$hobi', $anak_ke, $jumlah_saudara, '$no_kip')";
+                 VALUES ($pendaftaran_id, '$nama_lengkap', '$nisn', '$nik', '$tempat_lahir', $tanggal_lahir, '$jenis_kelamin', '$agama', '$hobi', $anak_ke, $jumlah_saudara, '$no_kip')";
     $conn->query($sql_diri);
 
 
@@ -138,6 +141,8 @@ try {
     $ayah_pekerjaan = bersihkan($conn, $_POST['ayah_pekerjaan']);
     $ayah_penghasilan = bersihkan($conn, $_POST['ayah_penghasilan']);
     $ayah_no_hp = bersihkan($conn, $_POST['ayah_no_hp']);
+    
+    // Perbaikan Error SQL untuk Tanggal Lahir Ayah (Ubah kosong menjadi NULL)
     $ayah_tanggal_lahir = !empty($_POST['ayah_tanggal_lahir']) ? "'" . bersihkan($conn, $_POST['ayah_tanggal_lahir']) . "'" : "NULL";
 
     // Ibu
@@ -149,6 +154,8 @@ try {
     $ibu_pekerjaan = bersihkan($conn, $_POST['ibu_pekerjaan']);
     $ibu_penghasilan = bersihkan($conn, $_POST['ibu_penghasilan']);
     $ibu_no_hp = bersihkan($conn, $_POST['ibu_no_hp']);
+    
+    // Perbaikan Error SQL untuk Tanggal Lahir Ibu (Ubah kosong menjadi NULL)
     $ibu_tanggal_lahir = !empty($_POST['ibu_tanggal_lahir']) ? "'" . bersihkan($conn, $_POST['ibu_tanggal_lahir']) . "'" : "NULL";
 
     // Wali
@@ -209,12 +216,35 @@ try {
     $status_akhir = "GAGAL";
     $raw_error = $e->getMessage();
 
+    // ==============================================================================
+    // PENERJEMAH PESAN ERROR AGAR RAMAH PENGGUNA AWAM
+    // ==============================================================================
     $pesan_error = "";
+
     if (strpos($raw_error, 'Duplicate entry') !== false) {
-        $pesan_error = "<b style='color:#dc3545;'>Data Ganda Ditemukan!</b><br>NISN atau NIK sudah pernah didaftarkan sebelumnya.";
+        if (strpos($raw_error, 'nisn') !== false) {
+            $pesan_error = "<b style='color:#dc3545;'>NISN Sudah Terdaftar!</b><br>NISN <b>".$_POST['nisn']."</b> sudah pernah digunakan mendaftar. Silakan periksa kembali atau hubungi panitia jika ini adalah kesalahan.";
+        } elseif (strpos($raw_error, 'nik') !== false) {
+            $pesan_error = "<b style='color:#dc3545;'>NIK Sudah Terdaftar!</b><br>NIK Calon Santri <b>".$_POST['nik']."</b> sudah pernah didaftarkan. Anda tidak perlu mendaftar ulang.";
+        } else {
+            $pesan_error = "<b style='color:#dc3545;'>Data Ganda Ditemukan!</b><br>Terdapat data unik yang sudah pernah didaftarkan sebelumnya.";
+        }
+    } elseif (strpos($raw_error, 'Incorrect date value') !== false) {
+        if (strpos($raw_error, 'ayah_tanggal_lahir') !== false) {
+            $pesan_error = "<b style='color:#dc3545;'>Tanggal Lahir Ayah Tidak Valid!</b><br>Pastikan Anda mengisi formulir tanggal lahir Ayah dengan benar.";
+        } elseif (strpos($raw_error, 'ibu_tanggal_lahir') !== false) {
+            $pesan_error = "<b style='color:#dc3545;'>Tanggal Lahir Ibu Tidak Valid!</b><br>Pastikan Anda mengisi formulir tanggal lahir Ibu dengan benar.";
+        } elseif (strpos($raw_error, 'tanggal_lahir') !== false) {
+            $pesan_error = "<b style='color:#dc3545;'>Tanggal Lahir Santri Tidak Valid!</b><br>Pastikan Anda mengisi formulir tanggal lahir Calon Santri dengan benar.";
+        } else {
+            $pesan_error = "<b style='color:#dc3545;'>Kesalahan Format Tanggal!</b><br>Ada form isian tanggal yang terlewat atau formatnya tidak sesuai dengan standar.";
+        }
+    } elseif (strpos($raw_error, 'Data too long') !== false) {
+        $pesan_error = "<b style='color:#dc3545;'>Teks Terlalu Panjang!</b><br>Ada kolom isian formulir yang jumlah hurufnya melebihi batas maksimal. Mohon persingkat isian Anda (misalnya pada bagian Nama atau Alamat).";
     } elseif (strpos($raw_error, 'File wajib') !== false) {
-        $pesan_error = "<b style='color:#dc3545;'>Berkas Gagal Diunggah!</b><br>Pastikan format foto benar (.jpg/.png) dan tidak lebih dari 2MB.";
+        $pesan_error = "<b style='color:#dc3545;'>Berkas Gagal Diunggah!</b><br>" . $raw_error . "<br>Pastikan format foto benar (.jpg/.png) dan tidak lebih dari 2MB.";
     } else {
+        // Fallback untuk error lain yang tidak terduga
         $pesan_error = "<b style='color:#dc3545;'>Gagal Menyimpan Data!</b><br>Pastikan seluruh isian formulir yang wajib bertanda bintang (*) telah diisi dengan benar.<br><br><small class='text-muted' style='font-size: 0.75rem;'>Kode Sistem: " . htmlspecialchars($raw_error) . "</small>";
     }
 }
