@@ -44,8 +44,8 @@ function tgl_indo($tanggal){
 
 // Logika Data
 $nama_lengkap = strtoupper($data['nama_lengkap']);
-if(strlen($nama_lengkap) > 20) {
-    $nama_lengkap = substr($nama_lengkap, 0, 20) . '...'; // Truncate jika terlalu panjang
+if(strlen($nama_lengkap) > 28) {
+    $nama_lengkap = substr($nama_lengkap, 0, 28) . '...'; // Truncate jika terlalu panjang
 }
 
 $nisn = !empty($data['nisn']) ? $data['nisn'] : '-';
@@ -67,10 +67,9 @@ $pdf->SetMargins(0, 0, 0);
 $pdf->SetAutoPageBreak(false);
 
 // 1. BACKGROUND BLANGKO
-// Cek file PNG atau JPG
 $blangko_path = 'blangko/blangko_kts.png';
 if (!file_exists($blangko_path)) {
-    $blangko_path = 'blangko/blangko_kts.jpg'; // Fallback jika ekstensi .jpg
+    $blangko_path = 'blangko/blangko_kts.jpg';
 }
 
 if (file_exists($blangko_path)) {
@@ -83,7 +82,7 @@ if (file_exists($blangko_path)) {
 
 // 2. FOTO SANTRI (Posisi Kiri)
 // Lebar 21mm, Tinggi 28mm (Rasio 3x4)
-$x_foto = 5;
+$x_foto = 6;
 $y_foto = 18;
 $w_foto = 21;
 $h_foto = 28;
@@ -110,53 +109,65 @@ if (!$foto_tersedia) {
 }
 
 // 3. KONTEN TEKS (Posisi Kanan)
-$x_text = 28; // Mulai teks setelah foto
+$x_text = 29; // Geser sedikit ke kanan dari foto
 $pdf->SetTextColor(11, 74, 105); // Warna Biru Gelap sesuai referensi
 
 // Judul KTS
 $pdf->SetXY($x_text, 17);
-$pdf->SetFont('Arial', 'B', 12);
+$pdf->SetFont('Arial', 'B', 11); // Judul sedikit diperkecil
 $pdf->Cell(0, 5, 'KARTU TANDA SANTRI', 0, 1, 'L');
 
 // Fungsi pembantu untuk baris data
-function printRow($pdf, $x, $y, $label, $value) {
+function printRow($pdf, $x, $y, $label, $value, $is_alamat = false) {
     $pdf->SetXY($x, $y);
-    $pdf->SetFont('Arial', 'B', 7);
-    $pdf->Cell(18, 3.5, $label, 0, 0, 'L');
-    $pdf->Cell(2, 3.5, ':', 0, 0, 'C');
+    $pdf->SetFont('Arial', 'B', 6.5); // Font dikecilkan dari 7 menjadi 6.5
+    
+    // Lebar kolom label disesuaikan
+    $w_label = 16; 
+    
+    $pdf->Cell($w_label, 3, $label, 0, 0, 'L');
+    $pdf->Cell(2, 3, ':', 0, 0, 'C');
     
     // Khusus alamat kita gunakan MultiCell agar bisa turun baris jika panjang
-    if ($label == 'Alamat') {
-        $pdf->MultiCell(37, 3.5, $value, 0, 'L');
+    // Lebar maksimal untuk teks alamat dibatasi agar tidak menabrak batas kanan
+    $w_value = 40; 
+    
+    // Perbaikan: Simpan posisi X agar MultiCell rata
+    $start_x = $pdf->GetX();
+    
+    if ($is_alamat) {
+        $pdf->MultiCell($w_value, 2.5, $value, 0, 'L'); // Line height untuk alamat 2.5
     } else {
-        $pdf->Cell(37, 3.5, $value, 0, 1, 'L');
+        $pdf->Cell($w_value, 3, $value, 0, 1, 'L');
     }
 }
 
 // Baris-baris Data
-$y_start = 23;
-$jarak = 3.8;
+$y_start = 22; // Naikkan sedikit titik awal teks
+$jarak = 3.2;  // Jarak antar baris dipersempit (dari 3.8 menjadi 3.2)
 
 printRow($pdf, $x_text, $y_start, 'Nama Lengkap', $nama_lengkap);
 printRow($pdf, $x_text, $y_start + ($jarak * 1), 'NISN', $nisn);
 printRow($pdf, $x_text, $y_start + ($jarak * 2), 'T.T.L', $ttl);
 printRow($pdf, $x_text, $y_start + ($jarak * 3), 'Nama Wali', strtoupper($nama_wali));
-printRow($pdf, $x_text, $y_start + ($jarak * 4), 'Alamat', $alamat);
+printRow($pdf, $x_text, $y_start + ($jarak * 4), 'Alamat', $alamat, true);
 
-// 4. TANDA TANGAN (Posisi Kanan Bawah)
-$x_ttd = 55;
-$w_ttd = 32;
+// 4. TANDA TANGAN (Posisi Kanan Bawah - Digeser maksimal ke sudut)
+$x_ttd = 62; // Geser lebih ke kanan (dari 55 ke 62)
+$y_ttd_start = 41; // Geser sedikit ke bawah (dari 40 ke 41)
+$w_ttd = 26;
 
-$pdf->SetXY($x_ttd, 40);
-$pdf->SetFont('Arial', 'B', 6);
+$pdf->SetTextColor(11, 74, 105);
+$pdf->SetXY($x_ttd, $y_ttd_start);
+$pdf->SetFont('Arial', 'B', 5.5); // Font ttd dikecilkan
 $pdf->Cell($w_ttd, 3, 'Way Kanan, ' . $tanggal_cetak, 0, 1, 'C');
 
 $pdf->SetX($x_ttd);
 $pdf->Cell($w_ttd, 3, 'Pimpinan', 0, 1, 'C');
 
 // Ruang kosong untuk stempel/paraf
-$pdf->SetXY($x_ttd, 51);
-$pdf->SetFont('Arial', 'B', 6.5);
+$pdf->SetXY($x_ttd, 52); // Geser nama pimpinan lebih ke bawah
+$pdf->SetFont('Arial', 'B', 6);
 $pdf->Cell($w_ttd, 3, 'Ust. Oktawidodo, S.Pd.I.', 0, 1, 'C');
 
 // --- OUTPUT PDF ---
