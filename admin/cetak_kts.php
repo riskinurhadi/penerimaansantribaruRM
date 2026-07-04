@@ -51,7 +51,7 @@ if(strlen($nama_lengkap) > 28) {
 $nisn = !empty($data['nisn']) ? $data['nisn'] : '-';
 $ttl = $data['tempat_lahir'] . ', ' . tgl_indo($data['tanggal_lahir']);
 $nama_wali = !empty($data['wali_nama']) ? $data['wali_nama'] : $data['ayah_nama'];
-$alamat = $data['desa_kelurahan'] . ', Kec. ' . $data['kecamatan'] . ', ' . $data['kota_kabupaten'];
+$alamat = strtoupper($data['kecamatan']); // HANYA MENAMPILKAN NAMA KECAMATAN
 
 // Tahun masuk untuk masa berlaku
 $tahun_masuk = date('Y', strtotime($data['created_at']));
