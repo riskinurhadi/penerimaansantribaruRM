@@ -144,7 +144,7 @@ function printRow($pdf, $x, $y, $label, $value, $is_alamat = false) {
 
 // Baris-baris Data
 $y_start = 22; // Naikkan sedikit titik awal teks
-$jarak = 3.2;  // Jarak antar baris dipersempit (dari 3.8 menjadi 3.2)
+$jarak = 3.5;  // Jarak antar baris dipersempit (dari 3.8 menjadi 3.2)
 
 printRow($pdf, $x_text, $y_start, 'Nama Lengkap', $nama_lengkap);
 printRow($pdf, $x_text, $y_start + ($jarak * 1), 'NISN', $nisn);
