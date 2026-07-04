@@ -154,7 +154,7 @@ printRow($pdf, $x_text, $y_start + ($jarak * 4), 'Alamat', $alamat, true);
 
 // 4. TANDA TANGAN (Posisi Kanan Bawah - Digeser maksimal ke sudut)
 $x_ttd = 62; // Geser lebih ke kanan (dari 55 ke 62)
-$y_ttd_start = 39; // Geser sedikit ke bawah (dari 40 ke 41)
+$y_ttd_start = 38; // Geser sedikit ke bawah (dari 40 ke 41)
 $w_ttd = 26;
 
 $pdf->SetTextColor(11, 74, 105);
