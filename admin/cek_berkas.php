@@ -13,7 +13,8 @@ $nama_lengkap_admin = $_SESSION['nama_lengkap'];
 $role = $_SESSION['role'];
 $username = $_SESSION['username'] ?? '';
 
-if ($role != 'Developer' && $role != 'Super Admin') {
+// PERBAIKAN: Izinkan juga Admin Pendaftaran untuk mengakses halaman ini
+if ($role != 'Developer' && $role != 'Super Admin' && $role != 'Admin Pendaftaran') {
     die("Akses ditolak! Anda tidak memiliki izin.");
 }
 
@@ -36,15 +37,64 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 $id_pendaftar = intval($_GET['id']);
 $status_pesan = '';
 
+// --- PROSES UPLOAD BERKAS OLEH ADMIN ---
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['upload_berkas'])) {
+    $jenis_kolom = mysqli_real_escape_string($conn, trim($_POST['jenis_kolom']));
+    $allowed_columns = ['pas_foto', 'kartu_keluarga', 'ktp_ortu', 'akta_kelahiran', 'ijazah_skhu', 'piagam_prestasi'];
+
+    if (in_array($jenis_kolom, $allowed_columns) && isset($_FILES['file_upload']) && $_FILES['file_upload']['error'] == 0) {
+        $dir_berkas = "../uploads/berkas/";
+        if (!file_exists($dir_berkas)) mkdir($dir_berkas, 0777, true);
+
+        // Ambil No Pendaftaran untuk penamaan file
+        $q_no = $conn->query("SELECT no_pendaftaran FROM pendaftaran WHERE id = $id_pendaftar");
+        $no_pendaftaran = $q_no->fetch_assoc()['no_pendaftaran'];
+
+        $file_info = pathinfo($_FILES['file_upload']['name']);
+        $ext = strtolower($file_info['extension']);
+        $allowed_ext = ['jpg', 'jpeg', 'png', 'pdf'];
+
+        if (in_array($ext, $allowed_ext)) {
+            $new_filename = $no_pendaftaran . "_" . $jenis_kolom . "_" . time() . "." . $ext;
+            $target_file = $dir_berkas . $new_filename;
+            $db_filepath = "uploads/berkas/" . $new_filename;
+
+            if (move_uploaded_file($_FILES['file_upload']['tmp_name'], $target_file)) {
+                // Hapus file lama jika ada
+                $q_old = $conn->query("SELECT $jenis_kolom FROM data_berkas WHERE pendaftaran_id = $id_pendaftar");
+                if ($q_old && $q_old->num_rows > 0) {
+                    $old_data = $q_old->fetch_assoc();
+                    if (!empty($old_data[$jenis_kolom]) && file_exists("../" . $old_data[$jenis_kolom])) {
+                        unlink("../" . $old_data[$jenis_kolom]);
+                    }
+                }
+
+                // Update atau Insert ke database
+                $cek_berkas = $conn->query("SELECT id FROM data_berkas WHERE pendaftaran_id = $id_pendaftar");
+                if ($cek_berkas && $cek_berkas->num_rows > 0) {
+                    $conn->query("UPDATE data_berkas SET $jenis_kolom = '$db_filepath' WHERE pendaftaran_id = $id_pendaftar");
+                } else {
+                    $conn->query("INSERT INTO data_berkas (pendaftaran_id, $jenis_kolom) VALUES ($id_pendaftar, '$db_filepath')");
+                }
+                $status_pesan = 'sukses_upload';
+            } else {
+                $status_pesan = 'gagal_upload';
+            }
+        } else {
+            $status_pesan = 'format_salah';
+        }
+    }
+}
+
 // --- PROSES UPDATE STATUS JIKA TOMBOL DIVALIDASI ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['status_verifikasi'])) {
     $status_baru = mysqli_real_escape_string($conn, trim($_POST['status_verifikasi']));
     
     // Update status pendaftaran
     if ($conn->query("UPDATE pendaftaran SET status_pendaftaran='$status_baru' WHERE id=$id_pendaftar")) {
-        $status_pesan = 'sukses';
+        $status_pesan = 'sukses_status';
     } else {
-        $status_pesan = 'gagal';
+        $status_pesan = 'gagal_status';
     }
 }
 
@@ -53,18 +103,18 @@ $q_utama = $conn->query("SELECT p.*, d.nama_lengkap FROM pendaftaran p JOIN data
 if ($q_utama->num_rows == 0) die("Data pendaftar tidak ditemukan.");
 $data = $q_utama->fetch_assoc();
 
-// Ambil Data Berkas
+// Ambil Data Berkas (Di-refresh setelah proses POST)
 $q_berkas = $conn->query("SELECT * FROM data_berkas WHERE pendaftaran_id = $id_pendaftar");
 $berkas = $q_berkas->fetch_assoc() ?: [];
 
-// List dokumen untuk ditampilkan secara looping
+// List dokumen untuk ditampilkan secara looping, disertai ID Kolom
 $list_dokumen = [
-    'Pas Foto (3x4)' => $berkas['pas_foto'] ?? '',
-    'Kartu Keluarga (KK)' => $berkas['kartu_keluarga'] ?? '',
-    'KTP Orang Tua/Wali' => $berkas['ktp_ortu'] ?? '',
-    'Akta Kelahiran' => $berkas['akta_kelahiran'] ?? '',
-    'Ijazah / SKL' => $berkas['ijazah_skhu'] ?? '',
-    'Piagam Prestasi' => $berkas['piagam_prestasi'] ?? ''
+    'pas_foto' => ['judul' => 'Pas Foto (3x4)', 'path' => $berkas['pas_foto'] ?? ''],
+    'kartu_keluarga' => ['judul' => 'Kartu Keluarga (KK)', 'path' => $berkas['kartu_keluarga'] ?? ''],
+    'ktp_ortu' => ['judul' => 'KTP Orang Tua/Wali', 'path' => $berkas['ktp_ortu'] ?? ''],
+    'akta_kelahiran' => ['judul' => 'Akta Kelahiran', 'path' => $berkas['akta_kelahiran'] ?? ''],
+    'ijazah_skhu' => ['judul' => 'Ijazah / SKL', 'path' => $berkas['ijazah_skhu'] ?? ''],
+    'piagam_prestasi' => ['judul' => 'Piagam Prestasi', 'path' => $berkas['piagam_prestasi'] ?? '']
 ];
 ?>
 
@@ -146,6 +196,11 @@ $list_dokumen = [
             border: 1px solid #cbd5e1; color: #475569; background: #ffffff; transition: 0.2s;
         }
         .btn-view-doc:hover { background: #f1f5f9; color: var(--text-dark); border-color: #94a3b8;}
+        
+        .btn-outline-primary {
+            border: 1px solid #3b82f6; color: #3b82f6; background: #ffffff;
+        }
+        .btn-outline-primary:hover { background: #eff6ff; color: #2563eb; }
     </style>
 </head>
 <body>
@@ -180,14 +235,18 @@ $list_dokumen = [
             <!-- AREA DOKUMEN KIRI -->
             <div class="col-xl-9 col-lg-8">
                 <div class="card-custom">
-                    <h6 class="fw-bold text-dark mb-4 border-bottom pb-2"><i class="fas fa-folder-open text-primary-green me-2"></i> Hasil Unggahan Calon Santri</h6>
+                    <h6 class="fw-bold text-dark mb-4 border-bottom pb-2"><i class="fas fa-folder-open text-primary-green me-2"></i> Hasil Unggahan Calon Santri & Admin</h6>
                     
                     <div class="row g-4">
-                        <?php foreach($list_dokumen as $judul => $path): ?>
+                        <?php foreach($list_dokumen as $kolom => $doc): 
+                            $judul = $doc['judul'];
+                            $path = $doc['path'];
+                            $ada = !empty($path) && file_exists("../".$path);
+                        ?>
                         <div class="col-md-4">
                             <div class="doc-box">
                                 <div>
-                                    <?php if(!empty($path) && file_exists("../".$path)): 
+                                    <?php if($ada): 
                                         $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
                                         if(in_array($ext, ['jpg', 'jpeg', 'png'])):
                                     ?>
@@ -215,11 +274,14 @@ $list_dokumen = [
                                     <?php endif; ?>
                                 </div>
                                 
-                                <div>
-                                    <?php if(!empty($path) && file_exists("../".$path)): ?>
-                                        <a href="../<?= $path ?>" target="_blank" class="btn btn-view-doc w-100">Buka / Unduh</a>
+                                <div class="mt-3">
+                                    <?php if($ada): ?>
+                                        <div class="d-flex gap-2">
+                                            <a href="../<?= $path ?>" target="_blank" class="btn btn-view-doc w-50" title="Buka Dokumen"><i class="fas fa-external-link-alt"></i> Buka</a>
+                                            <button type="button" class="btn btn-view-doc btn-outline-primary w-50" onclick="bukaModalUpload('<?= $kolom ?>', '<?= $judul ?>')" title="Ganti/Ubah Dokumen"><i class="fas fa-edit"></i> Ganti</button>
+                                        </div>
                                     <?php else: ?>
-                                        <button class="btn btn-view-doc w-100" disabled>Tidak Tersedia</button>
+                                        <button type="button" class="btn btn-outline-success w-100 btn-view-doc" onclick="bukaModalUpload('<?= $kolom ?>', '<?= $judul ?>')"><i class="fas fa-upload me-1"></i> Unggah Dokumen</button>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -263,10 +325,59 @@ $list_dokumen = [
     </div>
 </div>
 
+<!-- Modal Unggah Dokumen (Untuk Admin) -->
+<div class="modal fade" id="modalUpload" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 15px; border: none;">
+            <form action="" method="POST" enctype="multipart/form-data" id="formUpload">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dark"><i class="fas fa-cloud-upload-alt text-primary-green me-2"></i> Lengkapi Berkas Santri</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pb-2">
+                    <input type="hidden" name="upload_berkas" value="1">
+                    <input type="hidden" name="jenis_kolom" id="jenis_kolom" value="">
+                    
+                    <div class="alert bg-light border-0 mb-3" style="border-radius: 10px;">
+                        Silakan pilih file untuk melengkapi dokumen:<br>
+                        <strong id="nama_dokumen" class="fs-5 text-primary-green"></strong>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Pilih File (<span class="text-danger">JPG / PNG / PDF</span>)</label>
+                        <input type="file" class="form-control" name="file_upload" accept=".jpg,.jpeg,.png,.pdf" required>
+                        <small class="text-muted mt-2 d-block"><i class="fas fa-info-circle text-primary"></i> Pastikan file terlihat jelas dan dapat dibaca. Admin dapat mengunggah file langsung jika santri membawa berkas fisik / menyusul dokumen.</small>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 pt-0 mt-2">
+                    <button type="button" class="btn text-muted fw-medium" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn text-white px-4 btn-solid-custom w-auto" style="border-radius: 50px; font-weight: 500;" id="btnSubmitUpload"><i class="fas fa-save me-2"></i> Simpan Dokumen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    // --- Membuka Modal Upload Dokumen ---
+    function bukaModalUpload(kolom, judul) {
+        document.getElementById('jenis_kolom').value = kolom;
+        document.getElementById('nama_dokumen').innerText = judul;
+        var uploadModal = new bootstrap.Modal(document.getElementById('modalUpload'));
+        uploadModal.show();
+    }
+
+    // Ganti Teks Tombol saat mengunggah
+    document.getElementById('formUpload').addEventListener('submit', function() {
+        let btn = document.getElementById('btnSubmitUpload');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Mengunggah...';
+        btn.classList.add('disabled');
+    });
+
     // --- Konfirmasi Berkas LENGKAP ---
     function konfirmasiValid() {
         Swal.fire({
@@ -309,26 +420,19 @@ $list_dokumen = [
         });
     }
 
-    // --- Notifikasi Hasil Simpan ---
+    // --- Notifikasi Hasil Simpan & Upload ---
     document.addEventListener("DOMContentLoaded", function() {
-        <?php if ($status_pesan == 'sukses'): ?>
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: 'Status verifikasi pendaftar berhasil diperbarui.',
-                confirmButtonColor: '#0da15b',
-                timer: 2000,
-                showConfirmButton: false
-            }).then(() => {
-                window.location.href = 'verifikasi_berkas.php';
-            });
-        <?php elseif ($status_pesan == 'gagal'): ?>
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal!',
-                text: 'Terjadi kesalahan sistem saat memperbarui status.',
-                confirmButtonColor: '#ef4444'
-            });
+        <?php if ($status_pesan == 'sukses_status'): ?>
+            Swal.fire({ icon: 'success', title: 'Berhasil!', text: 'Status verifikasi pendaftar berhasil diperbarui.', confirmButtonColor: '#0da15b', timer: 2000, showConfirmButton: false });
+        <?php elseif ($status_pesan == 'gagal_status'): ?>
+            Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Terjadi kesalahan sistem saat memperbarui status.', confirmButtonColor: '#ef4444' });
+        
+        <?php elseif ($status_pesan == 'sukses_upload'): ?>
+            Swal.fire({ icon: 'success', title: 'Tersimpan!', text: 'Dokumen berhasil diunggah/diperbarui.', confirmButtonColor: '#0da15b', timer: 2000, showConfirmButton: false });
+        <?php elseif ($status_pesan == 'format_salah'): ?>
+            Swal.fire({ icon: 'warning', title: 'Format Tidak Didukung!', text: 'Harap hanya unggah file JPG, PNG, atau PDF.', confirmButtonColor: '#f59e0b' });
+        <?php elseif ($status_pesan == 'gagal_upload'): ?>
+            Swal.fire({ icon: 'error', title: 'Gagal!', text: 'Terjadi masalah saat menyimpan dokumen. Silakan coba lagi.', confirmButtonColor: '#ef4444' });
         <?php endif; ?>
     });
 </script>
