@@ -123,7 +123,7 @@ function printRow($pdf, $x, $y, $label, $value, $is_alamat = false) {
     $pdf->SetFont('Arial', 'B', 6.5); // Font dikecilkan dari 7 menjadi 6.5
     
     // Lebar kolom label disesuaikan
-    $w_label = 18; 
+    $w_label = 17; 
     
     $pdf->Cell($w_label, 3, $label, 0, 0, 'L');
     $pdf->Cell(2, 3, ':', 0, 0, 'C');
@@ -143,7 +143,7 @@ function printRow($pdf, $x, $y, $label, $value, $is_alamat = false) {
 }
 
 // Baris-baris Data
-$y_start = 20; // Naikkan sedikit titik awal teks
+$y_start = 22; // Naikkan sedikit titik awal teks
 $jarak = 3.4;  // Jarak antar baris dipersempit (dari 3.8 menjadi 3.2)
 
 printRow($pdf, $x_text, $y_start, 'Nama Lengkap', $nama_lengkap);
