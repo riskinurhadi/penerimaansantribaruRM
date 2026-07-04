@@ -202,7 +202,9 @@ $result = $conn->query($query);
                                 <td class="text-center"><span class="badge-status <?= $badge_class ?>"><?= htmlspecialchars($row['status_pendaftaran']) ?></span></td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center">
-                                        <a href="detail_pendaftar.php?id=<?= $row['id'] ?>" class="btn-act btn-act-view" title="Detail"><i class="fas fa-eye"></i></a>
+                                        <!-- Tombol Cetak KTS menggantikan Lihat Detail -->
+                                        <a href="cetak_kts.php?id=<?= $row['id'] ?>" target="_blank" class="btn-act btn-act-view" title="Cetak Kartu Tanda Santri (KTS)"><i class="fas fa-id-badge"></i></a>
+                                        
                                         <a href="edit_pendaftar.php?id=<?= $row['id'] ?>" class="btn-act btn-act-edit" title="Edit"><i class="fas fa-edit"></i></a>
                                         <a href="../cetak_bukti.php?id=<?= $row['id'] ?>" target="_blank" class="btn-act btn-act-print" title="Cetak Bukti / Kartu Kendali"><i class="fas fa-print"></i></a>
                                         
