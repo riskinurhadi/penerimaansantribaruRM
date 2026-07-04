@@ -123,7 +123,7 @@ function printRow($pdf, $x, $y, $label, $value, $is_alamat = false) {
     $pdf->SetFont('Arial', 'B', 6.5); // Font dikecilkan dari 7 menjadi 6.5
     
     // Lebar kolom label disesuaikan
-    $w_label = 16; 
+    $w_label = 18; 
     
     $pdf->Cell($w_label, 3, $label, 0, 0, 'L');
     $pdf->Cell(2, 3, ':', 0, 0, 'C');
