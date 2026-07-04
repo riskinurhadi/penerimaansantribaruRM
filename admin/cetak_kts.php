@@ -146,11 +146,11 @@ function printRow($pdf, $x, $y, $label, $value, $is_alamat = false) {
 $y_start = 22; // Naikkan sedikit titik awal teks
 $jarak = 3.4;  // Jarak antar baris dipersempit (dari 3.8 menjadi 3.2)
 
-printRow($pdf, $x_text, $y_start, 'Nama Lengkap', $nama_lengkap);
-printRow($pdf, $x_text, $y_start + ($jarak * 1), 'NISN', $nisn);
-printRow($pdf, $x_text, $y_start + ($jarak * 2), 'T.T.L', $ttl);
-printRow($pdf, $x_text, $y_start + ($jarak * 3), 'Nama Wali', strtoupper($nama_wali));
-printRow($pdf, $x_text, $y_start + ($jarak * 4), 'Alamat', $alamat, true);
+printRow($pdf, $x_text, $y_start, 'Nama Lengkap ', $nama_lengkap);
+printRow($pdf, $x_text, $y_start + ($jarak * 1), 'NISN ', $nisn);
+printRow($pdf, $x_text, $y_start + ($jarak * 2), 'T.T.L ', $ttl);
+printRow($pdf, $x_text, $y_start + ($jarak * 3), 'Nama Wali ', strtoupper($nama_wali));
+printRow($pdf, $x_text, $y_start + ($jarak * 4), 'Alamat ', $alamat, true);
 
 // 4. TANDA TANGAN (Posisi Kanan Bawah - Digeser maksimal ke sudut)
 $x_ttd = 62; // Geser lebih ke kanan (dari 55 ke 62)
